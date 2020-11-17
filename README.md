@@ -75,7 +75,9 @@ linearly with the number of divsteps, which makes this approach tractable.
 
 <img src="img/hulls2.png" width="384" height="288" /> <img src="img/hulls5.png" width="384" height="288" />
 
-The diagrams above show the hulls afters 0, 1, 2, and 5 divsteps. Note that in general the hulls shrink with increasing divsteps, and the *&delta;* value is correlated with
+<img src="img/hulls7.png" width="384" height="288" /> <img src="img/hulls10.png" width="384" height="288" />
+
+The diagrams above show the hulls afters 0, 1, 2, 5, 7, and 10 divsteps. Only *-4 &leq; &delta; &leq; 6* is shown. Note that in general the hulls shrink with increasing divsteps, and the *&delta;* value is correlated with
 how pointed the corresponding hull is in the *f* (for *&delta; > 0*) or *g* (for *&delta; < 0*) direction.
 
 ### Thresholds
