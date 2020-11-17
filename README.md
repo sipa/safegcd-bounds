@@ -48,10 +48,12 @@ Let *b = log<sub>2</sub>(f<sup>2</sup> + 4 g<sup>2</sup>)*. The paper proves tha
 
 ## An alternative strategy
 
-In this document an alternative, and approximately 1.9% smaller, bound is discussed. It is not proven in general, but can be shown to hold for all inputs up to at least 4096 bits in size. For any *M &geq; 157*, and any *0 &leq; g &leq; f &leq; M*,
+In this document an alternative, and approximately 1.9% smaller, bound is discussed: for any *M &geq; 157*, and any *0 &leq; g &leq; f &leq; M*,
 the number of iterations is bounded by the **largest** of these two expressions:
 * *2 &LeftFloor;(2455 log<sub>2</sub>(M) + 1402) / 1736&RightFloor;*
 * *2 &LeftFloor;(2455 log<sub>2</sub>(M) + 1676) / 1736&RightFloor; - 1*
+
+This formula is not proven in general, but can be computationally verified at least up to *M &leq; 2<sup>5719</sup>* (*B &leq; 16177*).
 
 Using *0 &leq; g &leq; f* is a reasonable restriction in the context of computing modular inverses. In that case *f* will be the modulus, and *g* the value
 whose inverse is to be computed, and *g < f* will hold naturally.
