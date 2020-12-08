@@ -53,7 +53,7 @@ the number of iterations is bounded by the **largest** of these two expressions:
 * *2 &LeftFloor;(2455 log<sub>2</sub>(M) + 1402) / 1736&RightFloor;*
 * *2 &LeftFloor;(2455 log<sub>2</sub>(M) + 1676) / 1736&RightFloor; - 1*
 
-This formula is not proven in general, but can be computationally verified at least up to *M &leq; 2<sup>5719</sup>* (*B &leq; 16177*).
+This formula is not proven in general, but can be computationally verified at least up to *M &leq; 2<sup>6606</sup>* (*B &leq; 18684*).
 
 Using *0 &leq; g &leq; f* is a reasonable restriction in the context of computing modular inverses. In that case *f* will be the modulus, and *g* the value
 whose inverse is to be computed, and *g < f* will hold naturally.
