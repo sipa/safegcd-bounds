@@ -16,10 +16,18 @@ iterations is sufficient to reach g=0. That means 722 divsteps is sufficient for
 modular inverses for any 255-bit modulus, and 724 is sufficient for any 256-bit modulus.
 
 This code runs significantly faster in Pypy.
+
+When running with --half-delta analysis will be performed for a variant of divsteps
+that is equivalent to the original one but with starting value delta=1/2 instead of
+delta=1.
 """
 
+import argparse
 import math
 
+# When running with --half-delta, we scale delta by a factor 2, and thus always increment
+# by 2 instead of 1.
+INC = 1
 
 def convex_hull(points):
     """Computes the convex hull of a set of 2D points.
@@ -76,20 +84,20 @@ def process_divstep(state):
         # Odd g:
         if delta > 0:
             # divsteps^n(delta,f,g) = divsteps^{n-1}(1-delta,g,(g-f)/2)
-            new_state.setdefault(1 - delta, [[], 0])
-            new_state[1 - delta][0].extend((g << 1, g - f) for f, g in points)
-            new_state[1 - delta][1] = max(new_state[1 - delta][1], abs_g << 1)
+            n = new_state.setdefault(INC - delta, [[], 0])
+            n[0].extend((g << 1, g - f) for f, g in points)
+            n[1] = max(n[1], abs_g << 1)
         else:
             # divsteps^n(delta,f,g) = divsteps^{n-1}(1+delta,f,(f+g)/2)
-            new_state.setdefault(1 + delta, [[], 0])
-            new_state[1 + delta][0].extend((f << 1, g + f) for f, g in points)
-            new_state[1 + delta][1] = max(new_state[1 + delta][1], abs_g << 1)
+            n = new_state.setdefault(INC + delta, [[], 0])
+            n[0].extend((f << 1, g + f) for f, g in points)
+            n[1] = max(n[1], abs_g << 1)
 
         # Even g:
         # divsteps^n(delta,f,g) = divsteps^{n-1}(1+delta,f,g/2)
-        new_state.setdefault(1 + delta, [[], 0])
-        new_state[1 + delta][0].extend((f << 1, g) for f, g in points)
-        new_state[1 + delta][1] = max(new_state[1 + delta][1], abs_g << 1)
+        n = new_state.setdefault(INC + delta, [[], 0])
+        n[0].extend((f << 1, g) for f, g in points)
+        n[1] = max(n[1], abs_g << 1)
 
     for delta in new_state:
         # Minimize the set of points by computing a new convex hull over them.
@@ -100,6 +108,11 @@ def process_divstep(state):
     return new_state
 
 
+parser = argparse.ArgumentParser(description="Compute the largest modulus for every number of divsteps.")
+parser.add_argument('--half-delta', '-d', action='store_true', default=False, help="Use half-delta divsteps rule")
+args = parser.parse_args()
+if args.half_delta:
+    INC=2
 
 # Define the initial state: a single hull for delta=1, defining the triangle f=0..1 g=0..f.
 STEP = 0

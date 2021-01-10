@@ -7,6 +7,12 @@
 #include <random>
 #include <cmath>
 
+#ifdef HALFDELTA
+#  define INC 2
+#else
+#  define INC 1
+#endif
+
 static constexpr int THREADS = 14;
 
 namespace {
@@ -104,20 +110,20 @@ bool ProcessHull(HullData& out, const std::map<int, HullData>& in, int delta, mp
     out.points.clear();
     const mpz_class* max_parent_abs_g_ptr = nullptr;
     std::map<int, HullData>::const_iterator it;
-    if (1 - delta > 0 && (it = in.find(1 - delta), it != in.end())) {
+    if (INC - delta > 0 && (it = in.find(INC - delta), it != in.end())) {
         max_parent_abs_g_ptr = &it->second.max_abs_g;
         for (const Point& point : it->second.points) {
             out.points.emplace_back(point.y << 1, point.y - point.x);
         }
     }
-    if ((it = in.find(delta - 1), it != in.end())) {
+    if ((it = in.find(delta - INC), it != in.end())) {
         if (max_parent_abs_g_ptr == nullptr || it->second.max_abs_g > *max_parent_abs_g_ptr) {
             max_parent_abs_g_ptr = &it->second.max_abs_g;
         }
         for (const Point& point : it->second.points) {
             out.points.emplace_back(point.x << 1, point.y);
         }
-        if (delta - 1 <= 0) {
+        if (delta - INC <= 0) {
             for (const Point& point : it->second.points) {
                 out.points.emplace_back(point.x << 1, point.x + point.y);
             }
@@ -144,8 +150,8 @@ bool ProcessHull(HullData& out, const std::map<int, HullData>& in, int delta, mp
 
 void ProcessDivStep(std::map<int, HullData>& new_state, const std::map<int, HullData>& old_state, int step) {
     std::vector<int> new_deltas;
-    int min_new_delta = std::min({1 + old_state.begin()->first, 1 - old_state.begin()->first, 1 + old_state.rbegin()->first, 1 - old_state.rbegin()->first});
-    int max_new_delta = std::max({1 + old_state.begin()->first, 1 - old_state.begin()->first, 1 + old_state.rbegin()->first, 1 - old_state.rbegin()->first});
+    int min_new_delta = std::min({INC + old_state.begin()->first, INC - old_state.begin()->first, INC + old_state.rbegin()->first, INC - old_state.rbegin()->first});
+    int max_new_delta = std::max({INC + old_state.begin()->first, INC - old_state.begin()->first, INC + old_state.rbegin()->first, INC - old_state.rbegin()->first});
     for (int new_delta = min_new_delta; new_delta <= max_new_delta; new_delta += 2) {
         new_deltas.push_back(new_delta);
     }
@@ -162,7 +168,7 @@ void ProcessDivStep(std::map<int, HullData>& new_state, const std::map<int, Hull
                 {
                     std::unique_lock<std::mutex> lock(mutex);
                     if (new_deltas.empty()) return;
-                    int count = std::max<int>(new_deltas.size() / (2 * THREADS), 1);
+                    int count = std::max<int>(std::min<int>(new_deltas.size() / (2 * THREADS), 100000000 / ((step + 1) * (step + 1))), 1);
                     while (count--) {
                         std::swap(new_deltas.back(), new_deltas[std::uniform_int_distribution<size_t>(0, new_deltas.size() - 1)(rng)]);
                         deltas.push_back(new_deltas.back());
