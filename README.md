@@ -140,9 +140,9 @@ where *&delta;* is updated to *2 - &delta;* and *2 + &delta;* instead of *1 - &d
 original algorithm, but starting with *&delta; = 1/2* instead of *&delta; = 1*. We'll call this variant "hddivsteps", where hd stands for
 "half delta".
 
-It appears to need approximately 18% fewer iterations. The following formula has been verified for all *M &leq; 2<sup>3805</sup>*:
+It appears to need approximately 18% fewer iterations. The following formula has been verified for all *M &leq; 2<sup>4096</sup>*:
 
-* If *M &geq; 4257874*, then for all *0 &leq; g &leq; f &leq; M*, the number of hddivsteps iterations is bounded by *&LeftFloor;(3787 log<sub>2</sub>(M) + 2166) / 1644&RightFloor;*.
+If *M &geq; 2301079*, then for all *0 &leq; g &leq; f &leq; M*, the number of hddivsteps iterations is bounded by *&LeftFloor;(3787 log<sub>2</sub>(M) + 2166) / 1644&RightFloor;*.
 
 ### Analysis
 

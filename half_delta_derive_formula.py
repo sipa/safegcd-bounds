@@ -43,6 +43,31 @@ for denom in range(1, MAX_DENOM):
 TERM = int(math.ceil(-NUMER*(MIN[0])))
 print("steps <= floor((%i * lthresh + %i) / %i)" % (NUMER, TERM, DENOM))
 
+# Find as of where the formula holds.
+LASTBAD = None
+FIRSTGOOD = None
+
+with open("half_delta_output.txt") as f:
+    for line in f:
+        match = RE.match(line)
+        if match:
+            for steps, thresh in [(int(match[1]), int(match[2], 16)), (int(match[1]) + 1, int(match[2], 16) + 1)]:
+                lthresh = math.log2(thresh)
+                csteps = int((lthresh * NUMER + TERM) / DENOM)
+                if csteps < steps:
+                    LASTBAD = (steps, csteps, thresh)
+                    FIRSTGOOD = None
+                elif FIRSTGOOD is None:
+                    FIRSTGOOD = (steps, csteps, thresh)
+
+assert LASTBAD[0] == FIRSTGOOD[0]
+for t in range(LASTBAD[2], FIRSTGOOD[2]+1):
+    lt = math.log2(t)
+    csteps = int((lt * NUMER + TERM) / DENOM)
+    if csteps >= FIRSTGOOD[0]:
+        print("Valid as of %i" % t)
+        break
+
 # Verify the formula with exact integer arithmetic (slow!).
 with open("half_delta_output.txt") as f:
     for line in f:

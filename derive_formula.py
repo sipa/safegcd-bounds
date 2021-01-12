@@ -5,7 +5,7 @@ import math
 MAX_DENOM = 1000
 
 # Only derive a formula for at least this many steps.
-MIN_STEPS = 21
+MIN_STEPS = 512
 
 # Direction coefficient to use.
 COEF = 2.8283396311963109128634878
