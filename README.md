@@ -1,8 +1,10 @@
 # Bounds on divsteps iterations in safegcd
 
-In this document an alternative strategy is explained for computing upper bounds on the number of divstep iterations
+In this document we explain an alternative strategy for computing upper bounds on the number of divstep iterations
 needed in for the "safegcd" algorithm from the paper
 ["Fast constant-time gcd computation and modular inversion"](https://gcd.cr.yp.to/papers.html) by Daniel J. Bernstein and Bo-Yin Yang.
+
+We then introduce a variant of the algorithm, and use the new strategy to show it needs fewer iterations.
 
 ## Introduction
 
@@ -115,3 +117,45 @@ but the fact that the exact same factor appears here experimentally, as well as 
 Another interesting observation is that these hulls seem to converge to a common shape. This is somewhat the case in general, as can be seen
 in the first picture above. It is much more the case when only looking at hulls that are 14 divsteps apart, as seen in the second picture above.
 Only *&delta; = 1* is pictured, but the same pattern exists for other *&delta;* values.
+
+## A faster variant of divsteps: hddivsteps
+
+Armed with the analysis technique explained above, it is now easy to see if variants exist with better bounds. It turns out that there
+are indeed several, and this variant appears particularly good:
+
+```python
+gcd(f, g):
+    delta = 1
+    while g != 0:
+        if delta > 0 and g & 1:
+            delta, f, g = 2 - delta, g, (g - f) >> 1
+        elif g & 1:
+            delta, f, g = 2 + delta, f, (g + f) >> 1
+        else:
+            delta, f, g = 2 + delta, f, (g    ) >> 1
+    return abs(f)
+```
+
+where *&delta;* is updated to *2 - &delta;* and *2 + &delta;* instead of *1 - &delta;* and *1 + &delta;*. This is equivalent to the
+original algorithm, but starting with *&delta; = 1/2* instead of *&delta; = 1*. We'll call this variant "hddivsteps", where hd stands for
+"half delta".
+
+It appears to need approximately 18% fewer iterations. The following formula has been verified for all *M &leq; 2<sup>3805</sup>*:
+
+* If *M &geq; 4257874*, then for all *0 &leq; g &leq; f &leq; M*, the number of hddivsteps iterations is bounded by *&LeftFloor;(3787 log<sub>2</sub>(M) + 2166) / 1644&RightFloor;*.
+
+### Analysis
+
+Both [hull_bound.py](hull_bound.py) (with the `--half-delta` option) and [hull_bound.cpp](hull_bound.cpp) (compiled with `-DHALF_DELTA`) support analysing this variant.
+The output can be found in [half_delta_output.txt](half_delta_output.txt). Similar to the original construction, the relation between *M* and *B* at the thresholds
+now seems to be accurately described as *log<sub>2</sub>(M) = B / 2.3035275222 + offset[B mod 54]*. Also similarly, valid sequences of now 54 hddivsteps
+exists whose combined transformation matrix has spectral radius *(3&Sqrt;273548757304312537 + 1591853137) / 2<sup>55</sup>*, exactly corresponding to the ratio
+*2.3035275222...*.
+
+### Hulls
+
+The diagrams below show the *&delta; = 1* hull after 756 iterations, both under hddivsteps and divsteps. They also show the three "parent" hulls they are derived from:
+specific hulls after 755 iterations, transformed using the 3 branches in the loop. The hddivsteps variant has hulls that overlap much more, meaning the resulting
+hull introduces less expansion. Only one steps and delta value is shown here, but this principle applies for all.
+
+<img src="img/hddivsteps-decompose.png" width="384" height="288" /> <img src="img/divsteps-decompose.png" width="384" height="288" />
