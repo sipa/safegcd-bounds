@@ -89,6 +89,8 @@ linearly with the number of divsteps, which makes this approach tractable.
 The diagrams above show the hulls afters 0, 1, 2, 5, 7, and 10 divsteps. Only *-4 &leq; &delta; &leq; 6* is shown. Note that in general the hulls shrink with increasing divsteps, and the *&delta;* value is correlated with
 how pointed the corresponding hull is in the *f* (for *&delta; > 0*) or *g* (for *&delta; < 0*) direction.
 
+This is implemented in [divsteps_iters.py](divsteps_iters.py).
+
 ### Thresholds
 
 In fact, a similar approach can be used to solve the reverse problem: given *B* iterations, what is the maximal *M*? Start with the triangle
@@ -146,7 +148,8 @@ If *M &geq; 2301079*, then for all *0 &leq; g &leq; f &leq; M*, the number of hd
 
 ### Analysis
 
-Both [hull_bound.py](hull_bound.py) (with the `--half-delta` option) and [hull_bound.cpp](hull_bound.cpp) (compiled with `-DHALF_DELTA`) support analysing this variant.
+[divsteps_iters.py](divsteps_iters.py) and [hull_bound.py](hull_bound.py) (with the `--half-delta` option) as well as [hull_bound.cpp](hull_bound.cpp) (compiled with `-DHALF_DELTA`)
+support analysing this variant.
 The output can be found in [half_delta_output.txt](half_delta_output.txt). Similar to the original construction, the relation between *M* and *B* at the thresholds
 now seems to be accurately described as *log<sub>2</sub>(M) = B / 2.3035275222 + offset[B mod 54]*. Also similarly, valid sequences of now 54 hddivsteps
 exists whose combined transformation matrix has spectral radius *(3&Sqrt;273548757304312537 + 1591853137) / 2<sup>55</sup>*, exactly corresponding to the ratio
