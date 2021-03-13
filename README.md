@@ -146,6 +146,8 @@ It appears to need approximately 18% fewer iterations. The following formula has
 
 If *M &geq; 2301079*, then for all *0 &leq; g &leq; f &leq; M*, the number of hddivsteps iterations is bounded by *&LeftFloor;(3787 log<sub>2</sub>(M) + 2166) / 1644&RightFloor;*.
 
+A similar generic formula that holds for all *M* along with a proof can be found [here](genproofhd.md).
+
 ### Analysis
 
 [divsteps_iters.py](divsteps_iters.py) and [hull_bound.py](hull_bound.py) (with the `--half-delta` option) as well as [hull_bound.cpp](hull_bound.cpp) (compiled with `-DHALF_DELTA`)
