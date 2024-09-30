@@ -74,7 +74,7 @@ unfold QQeq.
 auto with *.
 Qed.
 
-Hint Rewrite Dcompare_Q Dadd_Q Dmult_Q Dsub_Q : DQ.
+#[export] Hint Rewrite Dcompare_Q Dadd_Q Dmult_Q Dsub_Q : DQ.
 
 Lemma Qsum_app : forall l1 l2, Qsum (l1 ++ l2) == Qsum l1 + Qsum l2.
 Proof.
